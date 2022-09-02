@@ -9,12 +9,14 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
 from users.models import Follow
-from users.serializers import CustomUserSerializer, SubscribeSerializer
+from users.serializers import (
+    AllFieldsRequiredUserSerializer, SubscribeSerializer
+)
 
 User = get_user_model()
 
 
-class CustomUserViewSet(UserViewSet):
+class AllFieldsRequiredUserViewSet(UserViewSet):
     queryset = User.objects.all()
     pagination_class = PageNumberPagination
 
@@ -28,7 +30,7 @@ class CustomUserViewSet(UserViewSet):
     def get_serializer_class(self):
         if self.action in ('subscribe', 'subscriptions'):
             return SubscribeSerializer
-        return CustomUserSerializer
+        return AllFieldsRequiredUserSerializer
 
     @action(
         detail=True,

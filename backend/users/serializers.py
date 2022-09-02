@@ -1,15 +1,13 @@
 from django.contrib.auth import get_user_model
-
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
-from recipes.models import Recipe
 from recipes.serializers import RecipeMinimizedSerializer
 
 User = get_user_model()
 
 
-class CustomUserCreateSerializer(UserCreateSerializer):
+class AllFieldsRequiredUserCreateSerializer(UserCreateSerializer):
     class Meta:
         model = User
         fields = (
@@ -22,7 +20,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
         )
 
 
-class CustomUserSerializer(UserSerializer):
+class AllFieldsRequiredUserSerializer(UserSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -38,16 +36,13 @@ class CustomUserSerializer(UserSerializer):
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
-        if request.path_info == '/api/users/me/':
-            return False
-
         user = request.user
         if user.is_authenticated:
             return user.follower.filter(author=obj).exists()
         return False
 
 
-class SubscribeSerializer(CustomUserSerializer):
+class SubscribeSerializer(AllFieldsRequiredUserSerializer):
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
 
@@ -67,13 +62,15 @@ class SubscribeSerializer(CustomUserSerializer):
     def get_recipes(self, data):
         request = self.context.get('request')
         recipes_limit = request.GET.get('recipes_limit')
-        recipes = (
-            data.recipes.all()[:int(recipes_limit)]
-            if recipes_limit else data.recipes
-        )
-
+        if recipes_limit:
+            try:
+                recipes = data.recipes.all()[:int(recipes_limit)]
+            except ValueError:
+                recipes = data.recipes.all()
+        else:
+            recipes = data.recipes.all()
         serializer = RecipeMinimizedSerializer(recipes, many=True)
         return serializer.data
 
     def get_recipes_count(self, data):
-        return Recipe.objects.filter(author=data).count()
+        return data.recipes.count()

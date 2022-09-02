@@ -3,8 +3,7 @@ from django.http import HttpResponse
 from recipes.models import ShoppingCart
 
 
-def export_shopping_cart(request):
-    user = request.user
+def export_shopping_cart(user):
     shopping_cart = ShoppingCart.objects.filter(user=user).all()
     ingredients_list = dict()
 

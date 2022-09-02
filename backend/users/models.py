@@ -1,9 +1,8 @@
 from django.contrib.auth.models import AbstractUser
-from django.core.exceptions import ValidationError
 from django.db import models
 
 
-class CustomUser(AbstractUser):
+class AllFieldsRequiredUser(AbstractUser):
     """Модель пользователя."""
     email = models.EmailField(
         max_length=254,
@@ -45,12 +44,6 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.username
 
-    def clean(self):
-        if self.username == 'me':
-            raise ValidationError(
-                {'error': 'Имя пользователя не может быть "me".'}
-            )
-
     def save(self, *args, **kwargs):
         self.full_clean()
         return super().save(*args, **kwargs)
@@ -60,14 +53,14 @@ class Follow(models.Model):
     """Модель подписок."""
     objects = models.Manager()
     user = models.ForeignKey(
-        CustomUser,
+        AllFieldsRequiredUser,
         on_delete=models.CASCADE,
         related_name='follower',
         verbose_name='Подписчик',
     )
 
     author = models.ForeignKey(
-        CustomUser,
+        AllFieldsRequiredUser,
         on_delete=models.CASCADE,
         related_name='following',
         verbose_name='Пользователь, на которого подписываются',

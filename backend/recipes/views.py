@@ -1,5 +1,4 @@
 from django.shortcuts import get_object_or_404
-
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
@@ -69,7 +68,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(favorite_recipe.recipe)
             return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-        elif request.method == 'DELETE':
+        if request.method == 'DELETE':
             is_favorite_recipe_exists = FavoriteRecipe.objects.filter(
                 user=user, recipe=recipe,
             ).exists()
@@ -105,7 +104,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(shopping_cart_item.recipe)
             return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-        elif request.method == 'DELETE':
+        if request.method == 'DELETE':
             is_favorite_recipe_exists = ShoppingCart.objects.filter(
                 user=user, recipe=recipe,
             ).exists()
@@ -121,12 +120,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=False,
-        methods=['GET',],
+        methods=['GET'],
         permission_classes=[IsAuthenticatedOrReadOnly],
     )
     def download_shopping_cart(self, request):
         try:
-            return export_shopping_cart(request)
+            return export_shopping_cart(request.user)
         except:
             return Response(
                 {'detail': 'Извините, не получилось :(\nПовторите позднее.'},
