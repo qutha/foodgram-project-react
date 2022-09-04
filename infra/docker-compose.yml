@@ -3,13 +3,14 @@ services:
   db:
     image: postgres:13.0-alpine
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
       - /var/lib/postgresql/data/
     env_file:
       - ./.env
       
   backend:
-    image: qutha/foodgram-backend:v0.0.4
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
     restart: always
     volumes:
       - static_value:/backend/static/

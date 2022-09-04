@@ -14,8 +14,8 @@ class RecipeFilter(FilterSet):
         to_field_name='slug',
     )
 
-    is_favorite = BooleanFilter(
-        field_name='is_favorite', method='filter',
+    is_favorited = BooleanFilter(
+        field_name='is_favorited', method='filter',
     )
     is_in_shopping_cart = BooleanFilter(
         field_name='is_in_shopping_cart', method='filter',
@@ -38,6 +38,6 @@ class RecipeFilter(FilterSet):
             'author',
             'name',
             'tags',
-            'is_favorite',
+            'is_favorited',
             'is_in_shopping_cart',
         )

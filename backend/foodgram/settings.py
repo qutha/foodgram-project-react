@@ -140,8 +140,8 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 5,
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 6,
 }
 
 
@@ -149,9 +149,9 @@ DJOSER = {
     'LOGIN_FIELD': 'email',
     'HIDE_USERS': False,
     'SERIALIZERS': {
-        'current_user': 'users.serializers.AllFeildsRequiredUserSerializer',
+        'current_user': 'users.serializers.AllFieldsRequiredUserSerializer',
         'user': 'users.serializers.AllFieldsRequiredUserSerializer',
-        'user_create': 'users.serializers.AllFeildsRequiredUserCreateSerializer',
+        'user_create': 'users.serializers.AllFieldsRequiredUserCreateSerializer',
     },
     'PERMISSIONS': {
         'user': ['rest_framework.permissions.AllowAny'],

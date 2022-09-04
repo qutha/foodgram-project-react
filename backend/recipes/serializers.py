@@ -101,7 +101,9 @@ class RecipeSerializer(serializers.ModelSerializer):
         user = request.user
         if user.is_authenticated:
             return (
-                FavoriteRecipe.objects.filter(user=user, recipe=data).exists()
+                FavoriteRecipe.objects.filter(
+                    user=user, recipe=data,
+                ).exists()
             )
         return False
 
@@ -139,7 +141,6 @@ class RecipeSerializer(serializers.ModelSerializer):
                 tag=current_tag,
                 recipe=recipe,
             )
-
         return recipe
 
     def update(self, instance, validated_data):
@@ -148,7 +149,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         ingredients = request.data.get('ingredients')
         tags_id = request.data.get('tags')
 
-        super().update(instance, validated_data)
+        super().update(instance, **validated_data)
 
         if ingredients:
             IngredientRecipe.objects.filter(recipe=instance).delete()
@@ -173,6 +174,12 @@ class RecipeSerializer(serializers.ModelSerializer):
 
         return instance
 
+    def to_representation(self, instance):
+        response = super(RecipeSerializer, self).to_representation(instance)
+        if instance.image:
+            response['image'] = instance.image.url
+        return response
+
 
 class RecipeMinimizedSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
@@ -183,9 +190,7 @@ class RecipeMinimizedSerializer(serializers.ModelSerializer):
         read_only=True,
     )
 
-    image = serializers.CharField(
-        read_only=True,
-    )
+    image = Base64ImageField(required=True)
 
     cooking_time = serializers.CharField(
         read_only=True,
