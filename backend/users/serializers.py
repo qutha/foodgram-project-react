@@ -8,6 +8,7 @@ User = get_user_model()
 
 
 class AllFieldsRequiredUserCreateSerializer(UserCreateSerializer):
+    """Сериализатор для создания пользователя."""
     class Meta:
         model = User
         fields = (
@@ -21,6 +22,7 @@ class AllFieldsRequiredUserCreateSerializer(UserCreateSerializer):
 
 
 class AllFieldsRequiredUserSerializer(UserSerializer):
+    """Сериализатор для получения пользователя."""
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -43,6 +45,7 @@ class AllFieldsRequiredUserSerializer(UserSerializer):
 
 
 class SubscribeSerializer(AllFieldsRequiredUserSerializer):
+    """Сериализатор для подписок."""
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
 

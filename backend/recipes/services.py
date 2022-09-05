@@ -4,6 +4,7 @@ from recipes.models import ShoppingCart
 
 
 def export_shopping_cart(user):
+    """Метод, позволяющий экспортировать список покупок в формат .txt."""
     shopping_cart = ShoppingCart.objects.filter(user=user).all()
     ingredients_list = dict()
 

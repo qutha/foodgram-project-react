@@ -1,11 +1,10 @@
 import os
-from datetime import timedelta
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = '2fzt=fej7o05!%3a4n^v@d4(mm%u9yi%9+c&4hxy(_lb4ucoce'
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     '*',

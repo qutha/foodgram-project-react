@@ -11,6 +11,7 @@ User = get_user_model()
 
 
 class AuthorSerializer(serializers.ModelSerializer):
+    """Сериализатор для автора рецепта."""
     class Meta:
         model = User
         fields = (
@@ -23,6 +24,7 @@ class AuthorSerializer(serializers.ModelSerializer):
 
 
 class TagSerializer(serializers.ModelSerializer):
+    """Сериализатор для тегов рецепта."""
     class Meta:
         model = Tag
         fields = (
@@ -34,6 +36,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class IngredientSerializer(serializers.ModelSerializer):
+    """Сериализатор для ингрединтов."""
     class Meta:
         model = Ingredient
         fields = (
@@ -44,6 +47,8 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class IngredientRecipeSerializer(serializers.ModelSerializer):
+    """Сериализатор для ингредиентов в рецепте.
+    Отличается от сериализатора ингредиентов лишь полем количества"""
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all(),
         source='ingredient.id',
@@ -70,6 +75,7 @@ class IngredientRecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
+    """Сериализатор для рецептов."""
     tags = TagSerializer(
         read_only=True,
         many=True,
@@ -149,13 +155,11 @@ class RecipeSerializer(serializers.ModelSerializer):
         ingredients = request.data.get('ingredients')
         tags_id = request.data.get('tags')
 
-        super().update(instance, **validated_data)
-
         if ingredients:
             IngredientRecipe.objects.filter(recipe=instance).delete()
             for ingredient in ingredients:
-                current_ingredient = Ingredient.objects.get(
-                    id=ingredient.get('id')
+                current_ingredient, _ = Ingredient.objects.get_or_create(
+                    id=ingredient.get('id'),
                 )
                 IngredientRecipe.objects.create(
                     ingredient=current_ingredient,
@@ -172,7 +176,7 @@ class RecipeSerializer(serializers.ModelSerializer):
                     recipe=instance,
                 )
 
-        return instance
+        return super().update(instance, validated_data)
 
     def to_representation(self, instance):
         response = super(RecipeSerializer, self).to_representation(instance)
@@ -182,6 +186,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeMinimizedSerializer(serializers.ModelSerializer):
+    """Сериализатор для рецептов с меньшим набором полей."""
     id = serializers.PrimaryKeyRelatedField(
         queryset=Recipe.objects.all(),
     )

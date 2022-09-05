@@ -3,7 +3,7 @@ from django.db import models
 
 
 class AllFieldsRequiredUser(AbstractUser):
-    """Модель пользователя."""
+    """Модель пользователя, в которой все поля обязательны."""
     email = models.EmailField(
         max_length=254,
         unique=True,

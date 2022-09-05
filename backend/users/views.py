@@ -17,6 +17,8 @@ User = get_user_model()
 
 
 class AllFieldsRequiredUserViewSet(UserViewSet):
+    """Представление для создания и получения пользователей,
+    а также их подписок."""
     queryset = User.objects.all()
     pagination_class = PageNumberPagination
 
